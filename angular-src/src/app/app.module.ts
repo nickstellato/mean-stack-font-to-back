@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
+import { JwtModule } from '@auth0/angular-jwt';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -15,13 +17,14 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ValidateService } from './services/validate.service';
 import { AuthService } from './services/auth.service';
 import { FlashMessagesModule, FlashMessagesService } from 'angular2-flash-messages';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'Profile', component: ProfileComponent }
+  { path: 'profile', component: ProfileComponent }
 ]
 
 @NgModule({
@@ -39,9 +42,19 @@ const appRoutes: Routes = [
     FormsModule,
     HttpModule,
     RouterModule.forRoot(appRoutes),
-    FlashMessagesModule
+    FlashMessagesModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem('access_token');
+        },
+        throwNoTokenError: true,
+        skipWhenExpired: true
+      }
+    })
   ],
-  providers: [ValidateService, FlashMessagesService, AuthService],
+  providers: [ValidateService, FlashMessagesService, AuthService, JwtHelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -22,6 +22,8 @@
     "@angular/platform-browser": "^5.0.0",
     "@angular/platform-browser-dynamic": "^5.0.0",
     "@angular/router": "^5.0.0",
+    "@auth0/angular-jwt": "^1.1.0",
+    "angular-jwt": "github:auth0/angular-jwt",
     "angular2-flash-messages": "^2.0.5",
     "core-js": "^2.4.1",
     "rxjs": "^5.0.1",

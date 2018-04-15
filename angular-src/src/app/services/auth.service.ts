@@ -1,13 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { JwtModule } from '@auth0/angular-jwt';
+import { HttpClientModule } from '@angular/common/http';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { tokenName } from '@angular/compiler';
 
 @Injectable()
 export class AuthService {
   authToken: any;
   user: any;
 
-  constructor(private http:Http) { }
+  constructor(
+    public jwtHelper:JwtHelperService,
+    private http:Http
+  ) { }
+
+  ngOnInit(){
+    console.log(this.jwtHelper.isTokenExpired());
+  }
 
   registerUser(user){
     let headers = new Headers();
@@ -23,11 +34,31 @@ export class AuthService {
         .map(res => res.json());
   }
 
+  getProfile(){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('Authorization', this.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.get('http://localhost:3000/users/profile', {headers: headers})
+        .map(res => res.json());
+  }
+
   storeUserData(token, user){
     localStorage.setItem('id_token', token);
     localStorage.setItem('user', JSON.stringify(user));
     this.authToken = token;
     this.user = user;
+  }
+
+  loadToken(){
+    const token = localStorage.getItem('id_token');
+    this.authToken = token;
+  }
+
+  loggedIn(){
+    const token = localStorage.getItem('id_token');
+    const active = (!token) ? false: true;
+    return active
   }
 
   logout(){
